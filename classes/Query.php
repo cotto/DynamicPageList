@@ -1019,6 +1019,13 @@ class Query {
 				'rev.rev_timestamp'
 			]
 		);
+		// tell the query optimizer not to look at rows that the following subquery will filter out anyway
+		$this->addWhere(
+			[
+				$this->tableNames['page'].'.page_id = rev.rev_page',
+				'rev.rev_timestamp >= '.$this->DB->addQuotes($option)
+			]
+		);
 		$this->addWhere(
 			[
 				$this->tableNames['page'].'.page_id = rev.rev_page',
@@ -1139,6 +1146,13 @@ class Query {
 	private function _lastrevisionbefore($option) {
 		$this->addTable('revision', 'rev');
 		$this->addSelect(['rev.rev_id', 'rev.rev_timestamp']);
+		// tell the query optimizer not to look at rows that the following subquery will filter out anyway
+		$this->addWhere(
+			[
+				$this->tableNames['page'].'.page_id = rev.rev_page',
+				'rev.rev_timestamp < '.$this->DB->addQuotes($option)
+			]
+		);
 		$this->addWhere(
 			[
 				$this->tableNames['page'].'.page_id = rev.rev_page',
